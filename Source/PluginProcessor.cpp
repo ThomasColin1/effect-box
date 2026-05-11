@@ -1,11 +1,3 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -19,9 +11,19 @@ PluginAudioProcessor::PluginAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
 #endif
+        treeState (*this, nullptr, "PARAMETERS", createParameterLayout())
 {
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout PluginAudioProcessor::createParameterLayout()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    
+    params.push_back (std::make_unique<juce::AudioParameterFloat> ("gain", "Gain", 0.0f, 1.0f, 0.5f));
+    
+    return { params.begin(), params.end() };
 }
 
 PluginAudioProcessor::~PluginAudioProcessor()
@@ -156,6 +158,12 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
 
         // ..do something to the data...
     }
+
+    // Get the current value of the knob
+    float gainValue = *treeState.getRawParameterValue("gain");
+
+    // Apply it to the buffer
+    buffer.applyGain(gainValue);
 }
 
 //==============================================================================
