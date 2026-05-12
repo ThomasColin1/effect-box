@@ -97,12 +97,30 @@ void PluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    fDSP = new mydsp();
+    fDSP->init(sampleRate);
+    fUI = new MapUI();
+    fDSP->buildUserInterface(fUI);
+    inputs = new float*[2];
+    outputs = new float*[2];
+    for (int channel = 0; channel < 2; ++channel) {
+        inputs[channel] = new float[samplesPerBlock];
+        outputs[channel] = new float[samplesPerBlock];
+    }
 }
 
 void PluginAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+    delete fDSP;
+    delete fUI;
+    for (int channel = 0; channel < 2; ++channel) {
+        delete[] inputs[channel];
+        delete[] outputs[channel];
+    }
+    delete [] inputs;
+    delete [] outputs;
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -164,6 +182,22 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
 
     // Apply it to the buffer
     buffer.applyGain(gainValue);
+
+
+    // Simple echo  
+    for (int channel = 0; channel < totalNumInputChannels; ++channel) {
+        for (int i = 0; i < buffer.getNumSamples(); i++) {
+            inputs[channel][i] = *buffer.getWritePointer(channel,i);
+        }
+    }
+
+    fDSP->compute(buffer.getNumSamples(),inputs,outputs);
+
+    for (int channel = 0; channel < totalNumOutputChannels; ++channel) {
+        for (int i = 0; i < buffer.getNumSamples(); i++){
+            *buffer.getWritePointer(channel,i) = outputs[channel][i];
+        }
+    }
 }
 
 //==============================================================================
@@ -189,6 +223,16 @@ void PluginAudioProcessor::setStateInformation (const void* data, int sizeInByte
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+void PluginAudioProcessor::setDelay(float delay)
+{
+    fUI->setParamValue("delay",delay);
+}
+
+void PluginAudioProcessor::setFeedback(float feedback)
+{
+    fUI->setParamValue("feedback",feedback);
 }
 
 //==============================================================================

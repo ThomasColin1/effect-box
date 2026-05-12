@@ -16,9 +16,34 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     gainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.treeState, "gain", gainKnob);
 
+    delaySlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    delaySlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
+    delaySlider.setRange(0.0, 1.0, 0.01);
+    delaySlider.setValue(0.5);
+    addAndMakeVisible(delaySlider);
+    delayLabel.setText("Delay", juce::dontSendNotification);
+    delayLabel.attachToComponent(&delaySlider, false);
+    addAndMakeVisible(delayLabel);
+    delaySlider.onValueChange = [this] {
+        audioProcessor.setDelay(delaySlider.getValue());  
+    };
+
+    
+    feedbackSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+    feedbackSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
+    feedbackSlider.setRange(0.0, 1.0, 0.01);
+    feedbackSlider.setValue(0.5);
+    addAndMakeVisible(feedbackSlider);
+    feedbackLabel.setText("Feedback", juce::dontSendNotification);
+    feedbackLabel.attachToComponent(&feedbackSlider, false);
+    addAndMakeVisible(feedbackLabel);
+    feedbackSlider.onValueChange = [this] {
+        audioProcessor.setFeedback(feedbackSlider.getValue());  
+    };
+
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize (600, 300);  
 }
 
 PluginAudioProcessorEditor::~PluginAudioProcessorEditor()
@@ -36,5 +61,7 @@ void PluginAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
-    gainKnob.setBounds(150, 100, 100, 100);
+    gainKnob.setBounds(100, 100, 100, 100);
+    delaySlider.setBounds(250, 100, 100, 100);
+    feedbackSlider.setBounds(400, 100, 100, 100);
 }

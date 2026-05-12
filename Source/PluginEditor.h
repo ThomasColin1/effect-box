@@ -24,6 +24,12 @@ private:
     juce::Label gainLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> 
       gainAttachment;
-
+      
+    juce::Slider delaySlider;
+    juce::Label delayLabel;
+    
+    juce::Slider feedbackSlider;
+    juce::Label feedbackLabel;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessorEditor)
 };

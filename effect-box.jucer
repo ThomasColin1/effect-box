@@ -4,6 +4,7 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="gKzbPo" name="effect-box">
     <GROUP id="{95E8B133-D923-D989-1357-4CE511302C72}" name="Source">
+      <FILE id="S25UST" name="FaustEffect.h" compile="0" resource="0" file="Source/FaustEffect.h"/>
       <FILE id="QFH0bc" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="c4p3bZ" name="PluginProcessor.h" compile="0" resource="0"

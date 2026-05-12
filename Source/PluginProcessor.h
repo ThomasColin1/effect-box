@@ -2,6 +2,8 @@
 
 #include <JuceHeader.h>
 
+#include "FaustEffect.h"
+
 //==============================================================================
 /**
 */
@@ -47,7 +49,16 @@ public:
 
     juce::AudioProcessorValueTreeState treeState;
 
+    void setDelay(float delay);
+    void setFeedback(float feedback);
+
 private:
+
+    MapUI* fUI;
+    dsp* fDSP;
+    float **inputs;
+    float **outputs;
+
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessor)
